@@ -12,8 +12,11 @@ struct ContentView: View {
     
     @State var searchText = ""
     @State var alphabetical = false
+    @State var currentSelection = PredatorType.all
     
     var filteredDinos: [ApexPredators] {
+        predators.filter(by: currentSelection )
+        
         predators.sort(by: alphabetical)
         
         return predators.search(for: searchText)
@@ -31,12 +34,12 @@ struct ContentView: View {
                         Image(predator.image)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
+                            .frame(width: 100, height: 100)
                             .shadow(color: .white, radius: 1)
                         VStack(alignment: .leading) {
                             // Name
                             Text(predator.name)
-                                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                                .fontWeight(.bold)
                             
                             // Type
                             Text(predator.type.rawValue.capitalized)
@@ -64,12 +67,24 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: alphabetical ? "film" : "textformat")
                             .symbolEffect(.bounce, value: alphabetical)
+                    }                    
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("Filter", selection: $currentSelection) {
+                            ForEach(PredatorType.allCases) {
+                                type in
+                                Label(type.rawValue.capitalized, systemImage: type.icon)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
                     }
                 }
             }
             
         }
-        .preferredColorScheme(/*@START_MENU_TOKEN@*/.dark/*@END_MENU_TOKEN@*/)
+        .preferredColorScheme(.dark)
     }
 }
 
